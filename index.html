@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2025 港澳人在台聖誕聯歡會</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .main-title {
+            color: #fff;
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 0 0 20px rgba(255, 107, 107, 0.5);
+            background: linear-gradient(135deg, #ff6b6b, #ffd93d, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .container {
+            display: flex;
+            gap: 40px;
+            max-width: 1200px;
+            width: 100%;
+            position: relative;
+        }
+
+        .wheel-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+
+        .wheel-container {
+            position: relative;
+            width: 400px;
+            height: 400px;
+        }
+
+        #wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            position: relative;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+            transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+        }
+
+        #wheelCanvas {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
+
+        .pointer {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 40px solid #ff6b6b;
+            z-index: 10;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+        }
+
+        .spin-btn {
+            margin-top: 30px;
+            padding: 15px 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .spin-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6);
+        }
+
+        .spin-btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .panel {
+            position: absolute;
+            right: 20px;
+            top: 0;
+            width: 280px;
+            flex: none;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            color: white;
+            max-height: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel h2 {
+            margin-bottom: 20px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .add-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .add-form input[type="text"] {
+            padding: 12px 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .image-upload {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .image-upload label {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .image-upload label:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .image-upload input {
+            display: none;
+        }
+
+        .image-preview {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            display: none;
+        }
+
+        .add-btn {
+            padding: 12px;
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .add-btn:hover {
+            transform: scale(1.02);
+        }
+
+        .participants-list {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .participant-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            transition: transform 0.2s, opacity 0.3s;
+        }
+
+        .participant-item.hidden {
+            opacity: 0.4;
+        }
+
+        .participant-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .participant-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .participant-name {
+            flex: 1;
+            font-size: 1rem;
+        }
+
+        .participant-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: transform 0.2s;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .hide-btn {
+            background: #ffd93d;
+            color: #333;
+        }
+
+        .delete-btn {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .winner-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .winner-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            color: white;
+            animation: popIn 0.5s ease;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .winner-content h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .winner-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: #764ba2;
+            overflow: hidden;
+        }
+
+        .winner-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .winner-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .close-modal {
+            margin-top: 25px;
+            padding: 12px 30px;
+            background: white;
+            color: #764ba2;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .empty-message {
+            text-align: center;
+            opacity: 0.6;
+            padding: 40px;
+        }
+
+        .wheel-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 30px;
+            height: 30px;
+            background: #333;
+            border-radius: 50%;
+            z-index: 5;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+    <h1 class="main-title">2025 港澳人在台聖誕聯歡會</h1>
+    <div class="container">
+        <div class="wheel-section">
+            <div class="wheel-container">
+                <div class="pointer"></div>
+                <div id="wheel">
+                    <canvas id="wheelCanvas" width="400" height="400"></canvas>
+                    <div class="wheel-center"></div>
+                </div>
+            </div>
+            <button class="spin-btn" id="spinBtn" onclick="spinWheel()">SPIN!</button>
+        </div>
+
+        <div class="panel">
+            <h2>Participants</h2>
+            <div class="add-form">
+                <input type="text" id="nameInput" placeholder="Enter name...">
+                <div class="image-upload">
+                    <label for="imageInput">📷 Upload Image</label>
+                    <input type="file" id="imageInput" accept="image/*" onchange="previewImage(this)">
+                    <img id="imagePreview" class="image-preview" src="" alt="Preview">
+                </div>
+                <button class="add-btn" onclick="addParticipant()">Add Participant</button>
+            </div>
+            <div class="participants-list" id="participantsList">
+                <div class="empty-message">No participants yet. Add some above!</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="winner-modal" id="winnerModal">
+        <div class="winner-content">
+            <h2>🎉 Winner! 🎄</h2>
+            <div class="winner-avatar" id="winnerAvatar"></div>
+            <div class="winner-name" id="winnerName"></div>
+            <button class="close-modal" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        const colors = [
+            '#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4',
+            '#ffeaa7', '#dfe6e9', '#fd79a8', '#a29bfe',
+            '#74b9ff', '#00b894', '#fdcb6e', '#e17055'
+        ];
+
+        // Default participants
+        let participants = [
+            { id: 1, name: 'Kaka', image: 'Participant/Kaka.png', visible: true },
+            { id: 2, name: 'Long', image: 'Participant/Long.png', visible: true },
+            { id: 3, name: 'Han', image: 'Participant/Han.png', visible: true },
+            { id: 4, name: 'Weng', image: 'Participant/Weng.png', visible: true },
+            { id: 5, name: 'Michelle', image: 'Participant/Michelle.png', visible: true },
+            { id: 6, name: 'Jake', image: 'Participant/Jake.png', visible: true },
+            { id: 7, name: 'Vennie', image: 'Participant/Vennie.png', visible: true },
+            { id: 8, name: 'Fion', image: 'Participant/Fion.png', visible: true }
+        ];
+        let isSpinning = false;
+        let currentRotation = 0;
+
+        function previewImage(input) {
+            const preview = document.getElementById('imagePreview');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function addParticipant() {
+            const nameInput = document.getElementById('nameInput');
+            const imageInput = document.getElementById('imageInput');
+            const preview = document.getElementById('imagePreview');
+
+            const name = nameInput.value.trim();
+            if (!name) {
+                alert('Please enter a name');
+                return;
+            }
+
+            const participant = {
+                id: Date.now(),
+                name: name,
+                image: preview.src || null,
+                visible: true
+            };
+
+            participants.push(participant);
+            nameInput.value = '';
+            imageInput.value = '';
+            preview.src = '';
+            preview.style.display = 'none';
+
+            renderParticipants();
+            renderWheelWithImages();
+        }
+
+        function toggleVisibility(id) {
+            const participant = participants.find(p => p.id === id);
+            if (participant) {
+                participant.visible = !participant.visible;
+                renderParticipants();
+                renderWheelWithImages();
+            }
+        }
+
+        function deleteParticipant(id) {
+            participants = participants.filter(p => p.id !== id);
+            renderParticipants();
+            renderWheelWithImages();
+        }
+
+        function renderParticipants() {
+            const list = document.getElementById('participantsList');
+
+            if (participants.length === 0) {
+                list.innerHTML = '<div class="empty-message">No participants yet. Add some above!</div>';
+                return;
+            }
+
+            list.innerHTML = participants.map(p => `
+                <div class="participant-item ${p.visible ? '' : 'hidden'}">
+                    <div class="participant-avatar">
+                        ${p.image ? `<img src="${p.image}" alt="${p.name}">` : p.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div class="participant-name">${p.name}</div>
+                    <div class="participant-actions">
+                        <button class="action-btn hide-btn" onclick="toggleVisibility(${p.id})" title="${p.visible ? 'Hide' : 'Show'}">
+                            ${p.visible ? '👁️' : '👁️‍🗨️'}
+                        </button>
+                        <button class="action-btn delete-btn" onclick="deleteParticipant(${p.id})" title="Delete">
+                            ✕
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        let loadedImages = {};
+
+        function loadParticipantImages(callback) {
+            const visibleParticipants = participants.filter(p => p.visible);
+            let imagesToLoad = visibleParticipants.filter(p => p.image && !loadedImages[p.id]).length;
+
+            if (imagesToLoad === 0) {
+                callback();
+                return;
+            }
+
+            visibleParticipants.forEach(p => {
+                if (p.image && !loadedImages[p.id]) {
+                    const img = new Image();
+                    img.onload = () => {
+                        loadedImages[p.id] = img;
+                        imagesToLoad--;
+                        if (imagesToLoad === 0) callback();
+                    };
+                    img.onerror = () => {
+                        imagesToLoad--;
+                        if (imagesToLoad === 0) callback();
+                    };
+                    img.src = p.image;
+                }
+            });
+        }
+
+        function renderWheel() {
+            const canvas = document.getElementById('wheelCanvas');
+            const ctx = canvas.getContext('2d');
+            const visibleParticipants = participants.filter(p => p.visible);
+
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = Math.min(centerX, centerY) - 5;
+
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (visibleParticipants.length === 0) {
+                // Draw empty wheel
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+                ctx.fillStyle = '#667eea';
+                ctx.fill();
+                return;
+            }
+
+            const segmentAngle = (2 * Math.PI) / visibleParticipants.length;
+
+            // Draw segments
+            visibleParticipants.forEach((p, i) => {
+                const startAngle = i * segmentAngle - Math.PI / 2;
+                const endAngle = startAngle + segmentAngle;
+                const color = colors[i % colors.length];
+
+                // Draw pie segment
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+                ctx.closePath();
+                ctx.fillStyle = color;
+                ctx.fill();
+
+                // Draw segment border
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Calculate position for text/image (middle of segment)
+                const midAngle = startAngle + segmentAngle / 2;
+
+                // Use 80% of the segment - position content in middle of that area
+                const contentRadius = radius * 0.5; // Center of the 80% area
+                const contentX = centerX + Math.cos(midAngle) * contentRadius;
+                const contentY = centerY + Math.sin(midAngle) * contentRadius;
+
+                // Draw text (closer to center)
+                const textRadius = p.image && loadedImages[p.id] ? radius * 0.40 : radius * 0.55;
+                const textX = centerX + Math.cos(midAngle) * textRadius;
+                const textY = centerY + Math.sin(midAngle) * textRadius;
+
+                ctx.save();
+                ctx.translate(textX, textY);
+                ctx.rotate(midAngle + Math.PI / 2);
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 18px Segoe UI'; // Larger font
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+
+                // Add text shadow for readability
+                ctx.shadowColor = 'rgba(0,0,0,0.5)';
+                ctx.shadowBlur = 4;
+                ctx.shadowOffsetX = 1;
+                ctx.shadowOffsetY = 1;
+
+                const displayName = p.name.length > 12 ? p.name.substring(0, 12) + '...' : p.name;
+                ctx.fillText(displayName, 0, 0);
+                ctx.restore();
+
+                // Draw image if available (closer to edge, rotated so bottom faces center)
+                if (p.image && loadedImages[p.id]) {
+                    const imgSize = 70; // Larger image
+                    const imgRadius = radius * 0.68;
+                    const imgCenterX = centerX + Math.cos(midAngle) * imgRadius;
+                    const imgCenterY = centerY + Math.sin(midAngle) * imgRadius;
+
+                    ctx.save();
+                    ctx.translate(imgCenterX, imgCenterY);
+                    ctx.rotate(midAngle + Math.PI / 2); // Rotate so bottom faces center
+
+                    // Clip to circle
+                    ctx.beginPath();
+                    ctx.arc(0, 0, imgSize / 2, 0, 2 * Math.PI);
+                    ctx.closePath();
+                    ctx.clip();
+
+                    // Draw image centered
+                    ctx.drawImage(loadedImages[p.id], -imgSize / 2, -imgSize / 2, imgSize, imgSize);
+                    ctx.restore();
+
+                    // Draw border around image
+                    ctx.beginPath();
+                    ctx.arc(imgCenterX, imgCenterY, imgSize / 2, 0, 2 * Math.PI);
+                    ctx.strokeStyle = '#fff';
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+                }
+            });
+        }
+
+        function renderWheelWithImages() {
+            loadParticipantImages(() => {
+                renderWheel();
+            });
+        }
+
+        function spinWheel() {
+            const visibleParticipants = participants.filter(p => p.visible);
+
+            if (visibleParticipants.length < 2) {
+                alert('Add at least 2 visible participants to spin!');
+                return;
+            }
+
+            if (isSpinning) return;
+            isSpinning = true;
+
+            const spinBtn = document.getElementById('spinBtn');
+            spinBtn.disabled = true;
+
+            const wheel = document.getElementById('wheel');
+            const segmentAngle = 360 / visibleParticipants.length;
+
+            // Spin random amount (5-7 full rotations plus random extra)
+            const extraSpins = 5 + Math.floor(Math.random() * 3);
+            const randomAngle = Math.random() * 360;
+            const targetRotation = 360 * extraSpins + randomAngle;
+
+            currentRotation += targetRotation;
+            wheel.style.transform = `rotate(${currentRotation}deg)`;
+
+            setTimeout(() => {
+                isSpinning = false;
+                spinBtn.disabled = false;
+
+                // Calculate which segment the pointer lands on
+                // Pointer is at top (0 degrees), wheel rotates clockwise
+                // Normalize the rotation to 0-360 range
+                const normalizedRotation = currentRotation % 360;
+
+                // The pointer points to top, so we need to find which segment is at top
+                // Segments start at -90 degrees (top), so adjust accordingly
+                const pointerAngle = (360 - normalizedRotation + 360) % 360;
+
+                // Find which segment this angle falls into
+                const winnerIndex = Math.floor(pointerAngle / segmentAngle) % visibleParticipants.length;
+
+                showWinner(visibleParticipants[winnerIndex]);
+            }, 4000);
+        }
+
+        function showWinner(winner) {
+            const modal = document.getElementById('winnerModal');
+            const avatar = document.getElementById('winnerAvatar');
+            const name = document.getElementById('winnerName');
+
+            avatar.innerHTML = winner.image
+                ? `<img src="${winner.image}" alt="${winner.name}">`
+                : winner.name.charAt(0).toUpperCase();
+            name.textContent = winner.name;
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('winnerModal').style.display = 'none';
+        }
+
+        // Close modal on outside click
+        document.getElementById('winnerModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // Initial render
+        renderParticipants();
+        renderWheelWithImages();
+    </script>
+</body>
+</html>

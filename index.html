@@ -36,18 +36,17 @@
 
         .container {
             display: flex;
-            gap: 40px;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
             max-width: 1200px;
             width: 100%;
-            position: relative;
         }
 
         .wheel-section {
-            flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
         }
 
 
@@ -113,17 +112,14 @@
         }
 
         .panel {
-            position: absolute;
-            right: 20px;
-            top: 0;
-            width: 280px;
-            flex: none;
+            width: 100%;
+            max-width: 400px;
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             border-radius: 20px;
             padding: 25px;
             color: white;
-            max-height: 500px;
+            max-height: 400px;
             display: flex;
             flex-direction: column;
         }
